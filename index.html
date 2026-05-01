@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MusifyMini</title>
+    <style>
+      :root {
+        --bg-primary: #0f0f0f;
+        --bg-secondary: #1a1a1a;
+        --bg-card: #252525;
+        --text-primary: #ffffff;
+        --text-secondary: #b3b3b3;
+        --accent: #1db954;
+        --accent-hover: #1ed760;
+        --border: #333;
+        --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        --radius: 12px;
+        --radius-sm: 8px;
+        --transition: all 0.2s ease;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 1.5;
+        min-height: 100vh;
+        padding: 16px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        padding: 24px 0 32px;
+      }
+
+      .logo {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        background: linear-gradient(135deg, var(--accent), #1ed7a0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .subtitle {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+      }
+
+      .search-box {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .search-input {
+        flex: 1;
+        padding: 14px 20px;
+        border: 2px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        font-size: 1rem;
+        transition: var(--transition);
+        outline: none;
+      }
+
+      .search-input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.2);
+      }
+
+      .search-input::placeholder {
+        color: var(--text-secondary);
+      }
+
+      .search-btn {
+        padding: 14px 24px;
+        background: var(--accent);
+        color: #000;
+        border: none;
+        border-radius: var(--radius);
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .search-btn:hover {
+        background: var(--accent-hover);
+        transform: translateY(-1px);
+      }
+
+      .search-btn:active {
+        transform: translateY(0);
+      }
+
+      .search-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .results-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 4px;
+        margin-bottom: 16px;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+      }
+
+      .tracks-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+      }
+
+      .track-card {
+        background: var(--bg-card);
+        border-radius: var(--radius);
+        overflow: hidden;
+        transition: var(--transition);
+        border: 1px solid var(--border);
+      }
+
+      .track-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow);
+        border-color: var(--accent);
+      }
+
+      .track-image {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        display: block;
+        background: var(--bg-secondary);
+      }
+
+      .track-content {
+        padding: 16px;
+      }
+
+      .track-title {
+        font-weight: 600;
+        font-size: 1.05rem;
+        margin-bottom: 6px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        line-height: 1.3;
+      }
+
+      .track-artists {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        line-height: 1.3;
+      }
+
+      .track-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+
+      .explicit-badge {
+        background: #555;
+        color: #fff;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .download-btn {
+        width: 100%;
+        padding: 12px;
+        background: transparent;
+        color: var(--accent);
+        border: 2px solid var(--accent);
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .download-btn:hover {
+        background: var(--accent);
+        color: #000;
+      }
+
+      .download-btn:active {
+        transform: scale(0.98);
+      }
+
+      .download-btn.downloading {
+        opacity: 0.7;
+        cursor: wait;
+      }
+
+      .download-btn.downloading::after {
+        content: "";
+        width: 16px;
+        height: 16px;
+        border: 2px solid transparent;
+        border-top-color: currentColor;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading,
+      .empty-state,
+      .error-state {
+        text-align: center;
+        padding: 48px 24px;
+        color: var(--text-secondary);
+      }
+
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--border);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        margin: 0 auto 16px;
+        animation: spin 1s linear infinite;
+      }
+
+      .empty-state svg,
+      .error-state svg {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 16px;
+        opacity: 0.5;
+      }
+
+      .error-state {
+        color: #ff6b6b;
+      }
+
+      .retry-btn {
+        margin-top: 16px;
+        padding: 10px 20px;
+        background: var(--accent);
+        color: #000;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .retry-btn:hover {
+        background: var(--accent-hover);
+      }
+
+      footer {
+        text-align: center;
+        padding: 32px 0 24px;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+      }
+
+      footer a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      footer a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 600px) {
+        .search-box {
+          flex-direction: column;
+        }
+
+        .search-btn {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .tracks-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .logo {
+          font-size: 1.5rem;
+        }
+
+        .track-title {
+          font-size: 1rem;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1 class="logo">🎵 MusifyMini</h1>
+        <p class="subtitle">Busca y descarga tu música favorita</p>
+      </header>
+
+      <form class="search-box" id="searchForm">
+        <input
+          type="search"
+          class="search-input"
+          id="searchInput"
+          placeholder="Buscar canción, artista o álbum..."
+          autocomplete="off"
+          required
+          minlength="2"
+        />
+        <button type="submit" class="search-btn" id="searchBtn">
+          <span>Buscar</span>
+        </button>
+      </form>
+
+      <div id="resultsContainer">
+        <!-- Results will be injected here -->
+      </div>
+
+      <footer>
+        <p>
+          MusifyMini • Hecho con ❤️ •
+          <a
+            href="https://musify.api.karlincoder.com"
+            target="_blank"
+            rel="noopener"
+            >API</a
+          >
+        </p>
+      </footer>
+    </div>
+
+    <script>
+      // Configuración
+      const API_BASE = "https://musify.api.karlincoder.com";
+      const SEARCH_ENDPOINT = `${API_BASE}/search-gw/track`;
+      const DOWNLOAD_ENDPOINT = `${API_BASE}/download/track`;
+
+      // Elementos del DOM
+      const searchForm = document.getElementById("searchForm");
+      const searchInput = document.getElementById("searchInput");
+      const searchBtn = document.getElementById("searchBtn");
+      const resultsContainer = document.getElementById("resultsContainer");
+
+      // Estado
+      let isSearching = false;
+      let lastQuery = "";
+
+      // Utilidades
+      const formatDuration = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, "0")}`;
+      };
+
+      const getArtistsNames = (artists) => {
+        return artists.map((a) => a.name).join(", ");
+      };
+
+      const debounce = (func, wait) => {
+        let timeout;
+        return function executedFunction(...args) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      };
+
+      // Renderizado
+      const renderLoading = () => {
+        resultsContainer.innerHTML = `
+        <div class="loading">
+          <div class="loading-spinner"></div>
+          <p>Buscando canciones...</p>
+        </div>
+      `;
+      };
+
+      const renderEmpty = (query) => {
+        resultsContainer.innerHTML = `
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+          <p>No se encontraron resultados para "<strong>${query}</strong>"</p>
+          <p style="margin-top: 8px; font-size: 0.9rem;">Intenta con otro término de búsqueda</p>
+        </div>
+      `;
+      };
+
+      const renderError = (message) => {
+        resultsContainer.innerHTML = `
+        <div class="error-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <p>${message}</p>
+          <button class="retry-btn" id="retryBtn">Reintentar</button>
+        </div>
+      `;
+        document.getElementById("retryBtn")?.addEventListener("click", () => {
+          if (lastQuery) performSearch(lastQuery);
+        });
+      };
+
+      const renderTrack = (track) => {
+        const { id, title, artists, image_url, duration, explicit_lyrics } =
+          track;
+        const artistsText = getArtistsNames(artists);
+        const durationText = formatDuration(parseInt(duration));
+
+        return `
+        <article class="track-card" data-id="${id}">
+          <img 
+            class="track-image" 
+            src="${image_url.replace("100x100", "300x300")}" 
+            alt="${title} - ${artistsText}"
+            loading="lazy"
+            onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22300%22 viewBox=%220 0 300 300%22%3E%3Crect fill=%22%23252525%22 width=%22300%22 height=%22300%22/%3E%3Ctext fill=%22%23555%22 font-family=%22sans-serif%22 font-size=%2214%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22%3ESin imagen%3C/text%3E%3C/svg%3E'"
+          />
+          <div class="track-content">
+            <h3 class="track-title">${title}</h3>
+            <p class="track-artists">${artistsText}</p>
+            <div class="track-meta">
+              <span>${durationText}</span>
+              ${explicit_lyrics ? '<span class="explicit-badge">E</span>' : ""}
+            </div>
+            <button class="download-btn" data-track-id="${id}">
+              <span>Descargar MP3</span>
+            </button>
+          </div>
+        </article>
+      `;
+      };
+
+      const renderResults = (tracks, total) => {
+        if (!tracks || tracks.length === 0) {
+          renderEmpty(lastQuery);
+          return;
+        }
+
+        const tracksHTML = tracks.map(renderTrack).join("");
+        resultsContainer.innerHTML = `
+        <div class="results-info">
+          <span>${total} resultado${total !== 1 ? "s" : ""}</span>
+        </div>
+        <div class="tracks-grid">${tracksHTML}</div>
+      `;
+
+        // Event listeners para botones de descarga
+        document.querySelectorAll(".download-btn").forEach((btn) => {
+          btn.addEventListener("click", handleDownload);
+        });
+      };
+
+      // Lógica de búsqueda
+      const performSearch = async (query) => {
+        if (isSearching) return;
+
+        isSearching = true;
+        searchBtn.disabled = true;
+        lastQuery = query;
+
+        renderLoading();
+
+        try {
+          const response = await fetch(
+            `${SEARCH_ENDPOINT}?q=${encodeURIComponent(query)}`,
+          );
+
+          if (!response.ok) {
+            throw new Error(`Error ${response.status}: ${response.statusText}`);
+          }
+
+          const data = await response.json();
+
+          if (!data.data || !Array.isArray(data.data)) {
+            throw new Error("Respuesta inesperada del servidor");
+          }
+
+          renderResults(data.data, data.total || data.data.length);
+        } catch (error) {
+          console.error("Error en búsqueda:", error);
+          renderError(
+            "No se pudo conectar con el servidor. Verifica tu conexión e inténtalo de nuevo.",
+          );
+        } finally {
+          isSearching = false;
+          searchBtn.disabled = false;
+        }
+      };
+
+      // Lógica de descarga
+      const handleDownload = async (e) => {
+        const btn = e.currentTarget;
+        const trackId = btn.dataset.trackId;
+
+        if (btn.classList.contains("downloading")) return;
+
+        const originalText = btn.innerHTML;
+        btn.classList.add("downloading");
+        btn.querySelector("span").textContent = "Preparando...";
+
+        try {
+          // Paso 1: Obtener URL de descarga
+          const response = await fetch(`${DOWNLOAD_ENDPOINT}/${trackId}`);
+
+          if (!response.ok) {
+            throw new Error("Error al obtener enlace de descarga");
+          }
+
+          const data = await response.json();
+
+          if (!data.download_url) {
+            throw new Error("URL de descarga no encontrada");
+          }
+
+          // Paso 2: Iniciar descarga
+          window.open(data.download_url, "_blank");
+
+          // Feedback visual
+          btn.querySelector("span").textContent = "✓ Descargando";
+          setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.classList.remove("downloading");
+          }, 2000);
+        } catch (error) {
+          console.error("Error en descarga:", error);
+          btn.querySelector("span").textContent = "Error, intenta de nuevo";
+          setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.classList.remove("downloading");
+          }, 3000);
+        }
+      };
+
+      // Event listeners
+      searchForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const query = searchInput.value.trim();
+        if (query.length >= 2) {
+          performSearch(query);
+        }
+      });
+
+      // Búsqueda con debounce mientras escribe (opcional, desactivado por defecto)
+      // searchInput.addEventListener('input', debounce((e) => {
+      //   const query = e.target.value.trim();
+      //   if (query.length >= 3) {
+      //     performSearch(query);
+      //   }
+      // }, 500));
+
+      // Permitir búsqueda con Enter
+      searchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          searchForm.requestSubmit();
+        }
+      });
+
+      // Búsqueda inicial sugerida
+      document.addEventListener("DOMContentLoaded", () => {
+        // Enfocar input al cargar
+        searchInput.focus();
+
+        // Búsqueda de ejemplo si está vacío (descomentar si se desea)
+        // if (!searchInput.value) {
+        //   performSearch('Ed Sheeran');
+        // }
+      });
+    </script>
+  </body>
+</html>
